@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { withRouter } from 'react-router-dom';
+import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -37,10 +38,18 @@ function Login(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const classes = useStyles();
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    props.history.push('/dashboard');
+    const urlServer = 'https://devdash.hivefloor.com.au/api/v1/user/hiveTokenLogin';
+    const res = await axios.post(urlServer, `email=${email}&password=${password}`);
+    
+    if (res && !res.data.error) {
+      localStorage.setItem('token', res.data.token);
+      props.history.push('/dashboard');
+    }
   }
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />

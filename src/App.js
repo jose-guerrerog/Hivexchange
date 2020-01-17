@@ -2,20 +2,38 @@ import React, {Component} from 'react';
 import {
   BrowserRouter as Router,
   Route,
+  Redirect,
   Switch,
 } from "react-router-dom";
 import Login from './components/Login';
 import Dashboard from './components/Dashboard'; 
 
-function App(props) {
+function App() {
+  
+  const PrivateRoute = ({ component: Component, ...props }) => {
+    const token = localStorage.getItem('token');
+    return (
+      <Route
+        {...props}
+        render={props =>
+          token ? (
+            <Component {...props} />
+          ) : (
+            <Redirect to="/" />
+          )
+        }
+      />
+    );
+  };
+
   return (
       <div>
         <Router>
-            <Switch>
-              <Route exact path="/" component={Login} />
-              <Route path="/dashboard" component={Dashboard} />
-            </Switch>
-          </Router>
+          <Switch>
+            <Route exact path="/" component={Login} />
+            <PrivateRoute path="/dashboard" component={Dashboard} />
+          </Switch>
+        </Router>
       </div>
   )
 }

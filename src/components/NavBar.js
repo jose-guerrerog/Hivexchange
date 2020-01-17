@@ -25,10 +25,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+
 const NavBar = (props) => {
   const classes = useStyles();
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
     props.history.push('/');
   }
   
