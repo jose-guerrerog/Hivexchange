@@ -13,6 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
+import toast from "../global/alert";
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -47,6 +48,10 @@ function Login(props) {
     if (res && !res.data.error) {
       localStorage.setItem('token', res.data.token);
       props.history.push('/dashboard');
+    } else {
+      toast.error("Incorrect email or password.", {
+        position: toast.POSITION.TOP_RIGHT
+      });
     }
   }
 
