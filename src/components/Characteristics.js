@@ -16,10 +16,6 @@ const fieldsRegister = [
   'New Users',
 ];
 
-const rowsRegister = [
-  createData(0, 0, 0, 0, 0, 0),
-];
-
 const fieldsTransact = [
   'New Offers',
   'Completed Transactions',

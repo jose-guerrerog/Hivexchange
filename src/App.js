@@ -5,13 +5,16 @@ import {
   Redirect,
   Switch,
 } from "react-router-dom";
-import Login from './components/Login';
-import Dashboard from './components/Dashboard'; 
+import app from './views/app';
+import main from './views';
+import Login from './views/Login';
 
 function App() {
   
   const PrivateRoute = ({ component: Component, ...props }) => {
     const token = localStorage.getItem('token');
+    console.log('props');
+    console.log(props);
     return (
       <Route
         {...props}
@@ -19,7 +22,7 @@ function App() {
           token ? (
             <Component {...props} />
           ) : (
-            <Redirect to="/" />
+            <Redirect to="/login" />
           )
         }
       />
@@ -30,8 +33,9 @@ function App() {
       <div>
         <Router>
           <Switch>
-            <Route exact path="/" component={Login} />
-            <PrivateRoute path="/dashboard" component={Dashboard} />
+            <PrivateRoute path="/app" component={app} />
+            <Route path="/login" component={Login} />
+            <Route path="/" exact component={main} />
           </Switch>
         </Router>
       </div>

@@ -46,8 +46,8 @@ function Login(props) {
     const res = await axios.post(urlServer, `email=${email}&password=${password}`);
     
     if (res && !res.data.error) {
-      localStorage.setItem('token', res.data.token);
-      props.history.push('/dashboard');
+      await localStorage.setItem('token', res.data.token);
+      props.history.push('/');
     } else {
       toast.error("Incorrect email or password.", {
         position: toast.POSITION.TOP_RIGHT

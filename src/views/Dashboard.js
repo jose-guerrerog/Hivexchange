@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
-import NavBar from './NavBar';
-import Characteristics from './Characteristics';
+import NavBar from '../components/NavBar';
+import Characteristics from '../components/Characteristics';
 import {
   Table,
 } from '@material-ui/core';
@@ -8,7 +8,6 @@ import {
 function Dashboard(props) {
   return (
     <Fragment>
-      <NavBar />
       <Characteristics />
     </Fragment> 
   ) 
