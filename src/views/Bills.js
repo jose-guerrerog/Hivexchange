@@ -25,6 +25,10 @@ const useStyles1 = makeStyles(theme => ({
     flexShrink: 0,
     marginLeft: theme.spacing(2.5),
   },
+  pageContainer: {
+    paddingLeft: '55px',
+    paddingRight: '55px',
+  },
   titleTable: {
     fontWeight: 'bold',
     fontSize: '40px',
@@ -80,9 +84,7 @@ function Bills(props) {
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    console.log(date);
     const startDate = getFormatDate(date);
-    console.log(startDate);
     const url = `https://devdash.hivefloor.com.au/api/v1/report/orders/bills?order=name&startDate=${startDate}`;
     axios.get(url, {headers: { 'x-access-token': token}}).then((res) => {
       setInvoices(res.data);
@@ -99,7 +101,7 @@ function Bills(props) {
   };
 
   return (
-    <Fragment>
+    <div className={classes.pageContainer}>
       <div className={classes.titleTable}>
         Bills
       </div>
@@ -122,7 +124,7 @@ function Bills(props) {
         
       <CSVLink
         data={invoiceList}
-        filename="invoices.csv"
+        filename="bills.csv"
       >
         <IconButton aria-label="download">
           <GetAppIcon />
@@ -174,7 +176,7 @@ function Bills(props) {
           }
         </TableBody>
       </Table>
-    </Fragment>
+    </div>
   );
 }
 

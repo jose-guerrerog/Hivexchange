@@ -25,6 +25,10 @@ const useStyles1 = makeStyles(theme => ({
     flexShrink: 0,
     marginLeft: theme.spacing(2.5),
   },
+  pageContainer: {
+    paddingLeft: '55px',
+    paddingRight: '55px',
+  },
   titleTable: {
     fontWeight: 'bold',
     fontSize: '40px',
@@ -99,7 +103,7 @@ function Invoices(props) {
   };
 
   return (
-    <Fragment>
+    <div className={classes.pageContainer}>
       <div className={classes.titleTable}>
         Invoices
       </div>
@@ -174,7 +178,7 @@ function Invoices(props) {
           }
         </TableBody>
       </Table>
-    </Fragment>
+    </div>
   );
 }
 
