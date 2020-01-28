@@ -32,8 +32,8 @@ const useStyles1 = makeStyles(theme => ({
   titleTable: {
     fontWeight: 'bold',
     fontSize: '40px',
-    paddingTop: '10px',
-    paddingBottom: '10px',
+    paddingTop: '15px',
+    paddingBottom: '15px',
   },
   dateContainer: {
     display: 'flex',
@@ -42,7 +42,7 @@ const useStyles1 = makeStyles(theme => ({
   dateText: {
     fontSize: '20px',
     fontWeight: 'bold',
-    paddingRight: '10px',
+    paddingRight: '25px',
   },
   subMenu: {
     display: 'flex',
@@ -55,7 +55,7 @@ const useStyles1 = makeStyles(theme => ({
 
 
 function Invoices(props) {
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
   const [invoices, setInvoices] = useState({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -65,7 +65,7 @@ function Invoices(props) {
   const classes = useStyles1();
   
   useEffect(() => {
-    const url = 'https://devdash.hivefloor.com.au/api/v1/report/orders/invoices?order=name&pageSize=50&page=1';
+    const url = `${process.env.REACT_APP_BASE_API_ENDPOINT}/api/v1/report/orders/invoices?order=name&pageSize=50&page=1`;
     axios.get(url, {headers: { 'x-access-token': token}}).then((res) => {
       setInvoices(res.data);
     });    
@@ -84,10 +84,8 @@ function Invoices(props) {
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    console.log(date);
     const startDate = getFormatDate(date);
-    console.log(startDate);
-    const url = `https://devdash.hivefloor.com.au/api/v1/report/orders/invoices?order=name&startDate=${startDate}`;
+    const url = `${process.env.REACT_APP_BASE_API_ENDPOINT}/api/v1/report/orders/invoices?order=name&startDate=${startDate}`;
     axios.get(url, {headers: { 'x-access-token': token}}).then((res) => {
       setInvoices(res.data);
     });
@@ -109,7 +107,7 @@ function Invoices(props) {
       </div>
       <div className={classes.dateContainer}>
         <span className={classes.dateText}>
-          Start Date
+          Invoice Date
         </span>
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <KeyboardDatePicker

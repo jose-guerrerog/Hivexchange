@@ -42,7 +42,7 @@ function Login(props) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const urlServer = 'https://devdash.hivefloor.com.au/api/v1/user/hiveTokenLogin';
+    const urlServer = `${process.env.REACT_APP_BASE_API_ENDPOINT}/api/v1/user/hiveTokenLogin`;
     const res = await axios.post(urlServer, `email=${email}&password=${password}`);
     
     if (res && !res.data.error) {

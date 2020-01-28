@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -8,13 +8,28 @@ import {
 import app from './views/app';
 import main from './views';
 import Login from './views/Login';
+import Lottie from 'react-lottie';
+import animationData from './splash-screen.json'
 
 function App() {
-  
+
+  const [showSVGLoader, setShowSVGLoader] = useState(false);
+  const defaultOptions = {
+    loop: false,
+    autoplay: true, 
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
+  };
+
+  useEffect(() => {
+    setShowSVGLoader(true);
+  }, []);
+
+   
   const PrivateRoute = ({ component: Component, ...props }) => {
     const token = localStorage.getItem('token');
-    console.log('props');
-    console.log(props);
     return (
       <Route
         {...props}
@@ -28,6 +43,29 @@ function App() {
       />
     );
   };
+
+  if (showSVGLoader) {
+    return (
+      <div>
+      <Lottie
+        options={defaultOptions}
+        height={400}
+        width={400}
+        isStopped={false}
+        isPaused={false}
+        eventListeners={[
+          {
+            eventName: 'complete',
+            callback: obj => {
+              setShowSVGLoader(false);
+            }
+          }
+        ]}
+      />
+    </div>
+
+    )
+  }
 
   return (
       <div>

@@ -5,6 +5,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 
 // Generate Order Data
@@ -57,6 +58,12 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     width: '100px',
   },
+  circularProgress: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: '30px',
+  },
   normalCell: {
     fontWeight: 'normal',
   },
@@ -74,11 +81,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const dataRows = [];
-
 export default function Characteristics() {
   const [users, setUsers] = useState([]);
   const [transactRows, setTransactRows] = useState([]);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   const classes = useStyles();
   useEffect(() => {
@@ -91,6 +97,7 @@ export default function Characteristics() {
     Promise.all([promise1, promise2, promise3]).then(function(values) {
       let rUsers = [];
       let tRows = [];
+      setIsDataLoaded(true);
       values.map(value => {
         const type = urlsData[value.config.url];
         if (type === '') {
@@ -102,6 +109,12 @@ export default function Characteristics() {
       setTransactRows(tRows);
     });
   }, []);
+
+  if (!isDataLoaded) {
+    return (
+      <div className={classes.circularProgress}><CircularProgress /></div>
+    )
+  }
 
   return (
     <React.Fragment>
@@ -182,25 +195,25 @@ export default function Characteristics() {
                   align="center"
                   className={classes[backgroundColor]}
                 >
-                  {row.value.lastMonth[row.type].length}
+                  {row.value.lastMonth[row.type] ? row.value.lastMonth[row.type].length : 0}
                 </TableCell>
                 <TableCell
                   align="center"
                   className={classes[backgroundColor]}
                 >
-                  {row.value.lastWeek[row.type].length}
+                  {row.value.lastWeek[row.type] ? row.value.lastWeek[row.type].length : 0}
                 </TableCell>
                 <TableCell
                   align="center"
                   className={classes[backgroundColor]}
                 >
-                  {row.value.thisMonth[row.type].length}
+                  {row.value.thisMonth[row.type] ? row.value.thisMonth[row.type].length : 0}
                 </TableCell>
                 <TableCell
                   align="center"
                   className={classes[backgroundColor]}
                 >
-                  {row.value.thisWeek[row.type].length}
+                  {row.value.thisWeek[row.type] ? row.value.thisWeek[row.type].length : 0}
                 </TableCell>
               </TableRow>
             );
