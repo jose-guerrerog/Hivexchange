@@ -21,6 +21,7 @@ const fieldsRegister = [
 
 const fieldsTransact = [
   {label: 'New Offers', value: 'idk'},
+  {label: 'Total', value: 'total'},
   {label: 'Total Orders', value: 'count'},
   {label: 'Pending Orders', value: 'pending'},
   {label: 'Platform Profit', value: 'platformProfit'},
@@ -108,7 +109,8 @@ export default function Characteristics() {
   }
 
   const getFormattedDate = (date, isMonth) => {
-    if (!date) return '';
+    if (!date)
+      return '';
     const months = ['Jan', 'Feb', 'Mar','Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const dateComponents = date.split('-');
     const formattedMonth = months[Number(dateComponents[1]) - 1];
@@ -116,6 +118,12 @@ export default function Characteristics() {
       return `${formattedMonth} ${dateComponents[0]}`
     }
     return `${dateComponents[2]} ${formattedMonth} ${dateComponents[0]}`;
+  };
+
+  const roundTwoDecimals = (value) => {
+    if (!value)
+      return null;
+    return Math.ceil(parseFloat(value) * 100) / 100;
   };
 
   const dataRegister = data ? data.users : {};
@@ -205,17 +213,21 @@ export default function Characteristics() {
             </TableCell>
           </TableRow>
           {fieldsTransact.map((field, index) => {
+            const isAmount = field.value === 'total' || field.value === 'platformProfit' || field.value === 'brokerProfit';
+            const dollarSign = isAmount ? '$' : '';
             return (
               <TableRow>
                 <TableCell>
                   {field.label}
                 </TableCell>
                 {timeIntervals.map((interval, index) => {
+                  const value = dataTransact && dataTransact[interval] && dataTransact[interval][field.value] || '0';
+                  const displayedValue = isAmount ? roundTwoDecimals(value) : value;
                   return (
                     <TableCell
                       align="center"
                     >
-                      {dataTransact && dataTransact[interval] && dataTransact[interval][field.value] || '0'}
+                      {dollarSign + displayedValue}
                     </TableCell>
                   );
                 })}
