@@ -8,30 +8,25 @@ import TableRow from '@material-ui/core/TableRow';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 
-// Generate Order Data
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-  return { id, date, name, shipTo, paymentMethod, amount };
-}
+const timeIntervals = [
+  'lastMonth',
+  'thisMonth',
+  'lastWeek',
+  'thisWeek',
+];
 
 const fieldsRegister = [
   'New Users',
 ];
 
 const fieldsTransact = [
-  'New Offers',
-  'Completed Transactions',
+  {label: 'New Offers', value: 'idk'},
+  {label: 'Total Orders', value: 'count'},
+  {label: 'Pending Orders', value: 'pending'},
+  {label: 'Platform Profit', value: 'platformProfit'},
+  {label: 'Broker Profit', value: 'brokerProfit'},
+  {label: 'Completed Transactions', value: 'idk'},
 ];
-
-const rowsTransact = [
-  createData(0, 0, 0, 0, 0, 0),
-  createData(1, 0, 0, 0, 0, 0),
-];
-
-const urlsData = {
-  'https://devdash.hivefloor.com.au/api/v1/report/users/dashboard' : '',
-  'https://devdash.hivefloor.com.au/api/v1/report/orders/dashboard' : 'sales',
-  'https://devdash.hivefloor.com.au/api/v1/report/offers/dashboard' : 'offers',
-};
 
 const backgroundColors = {
   'New Users' : 'normalBackground',
@@ -45,6 +40,9 @@ const useStyles = makeStyles(theme => ({
   },
   fields: {
     width: '150px',
+  },
+  headCell: {
+    fontWeight: 'bold',
   },
   registerCell: {
     color: 'white',
@@ -82,31 +80,24 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Characteristics() {
-  const [users, setUsers] = useState([]);
-  const [transactRows, setTransactRows] = useState([]);
+  const [data, setData] = useState(null);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   const classes = useStyles();
   useEffect(() => {
     const token = localStorage.getItem('token');
 
-    const promise1 = axios.get('https://devdash.hivefloor.com.au/api/v1/report/users/dashboard', {headers: { 'x-access-token': token}});
-    const promise2 = axios.get('https://devdash.hivefloor.com.au/api/v1/report/orders/dashboard', {headers: { 'x-access-token': token}});
-    const promise3 = axios.get('https://devdash.hivefloor.com.au/api/v1/report/offers/dashboard', {headers: { 'x-access-token': token}});
+    const promise1 = axios.get(`${process.env.REACT_APP_BASE_API_ENDPOINT}/api/v1/report/users/dashboard`, {headers: { 'x-access-token': token}});
+    const promise2 = axios.get(`${process.env.REACT_APP_BASE_API_ENDPOINT}/api/v1/report/orders/dashboard`, {headers: { 'x-access-token': token}});
+    const promise3 = axios.get(`${process.env.REACT_APP_BASE_API_ENDPOINT}/api/v1/report/offers/dashboard`, {headers: { 'x-access-token': token}});
       
     Promise.all([promise1, promise2, promise3]).then(function(values) {
-      let rUsers = [];
-      let tRows = [];
       setIsDataLoaded(true);
-      values.map(value => {
-        const type = urlsData[value.config.url];
-        if (type === '') {
-          setUsers(rUsers.concat(value.data));
-        } else {
-          tRows.push({'type': type, 'value': value.data}); 
-        }
-      });
-      setTransactRows(tRows);
+      const dataLoaded = {
+        users: values[0].data,
+        orders: values[1].data,
+      };
+      setData(dataLoaded);
     });
   }, []);
 
@@ -116,6 +107,21 @@ export default function Characteristics() {
     )
   }
 
+  const getFormattedDate = (date, isMonth) => {
+    if (!date) return '';
+    const months = ['Jan', 'Feb', 'Mar','Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const dateComponents = date.split('-');
+    const formattedMonth = months[Number(dateComponents[1]) - 1];
+    if (isMonth) {
+      return `${formattedMonth} ${dateComponents[0]}`
+    }
+    return `${dateComponents[2]} ${formattedMonth} ${dateComponents[0]}`;
+  };
+
+  const dataRegister = data ? data.users : {};
+  const dataTransact = data ? data.orders : {};
+  const dates = data ? data.users.dates : {};
+
   return (
     <React.Fragment>
       <br />
@@ -123,10 +129,46 @@ export default function Characteristics() {
         <TableHead>
           <TableRow>
             <TableCell colSpan={2}></TableCell>
-            <TableCell align="center">Previous Month</TableCell>
-            <TableCell align="center">Previous Week</TableCell>
-            <TableCell align="center">Current Month</TableCell>
-            <TableCell align="center">Current Week</TableCell>
+            <TableCell align="center">
+              <div className={classes.headCell}>
+                <div>
+                  Previous Month
+                </div>
+                <div>
+                  {`${getFormattedDate(dates.startOfLastMonth, true)}`}
+                </div>
+              </div>
+            </TableCell>
+            <TableCell align="center">
+              <div className={classes.headCell}>
+                <div>
+                  Previous Week
+                </div>
+                <div>
+                  {`${getFormattedDate(dates.startOfLastWeek)}`}
+                </div>
+              </div>
+            </TableCell>
+            <TableCell align="center">
+              <div className={classes.headCell}>
+                <div>
+                  Current Month
+                </div>
+                <div>
+                  {`${getFormattedDate(dates.startOfMonth, true)}`}
+                </div>
+              </div>
+            </TableCell>
+            <TableCell align="center">
+              <div className={classes.headCell}>
+                <div>
+                  Current Week
+                </div>
+                <div>
+                  {`${getFormattedDate(dates.startOfWeek)}`}
+                </div>
+              </div>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -135,88 +177,50 @@ export default function Characteristics() {
               <span>Register</span>
             </TableCell>
           </TableRow>
-          {users.map((row, index) => {
-            const field = fieldsRegister[index];
-            const backgroundColor = backgroundColors[field]; 
+          {fieldsRegister.map((field, index) => {
+            const backgroundColor = backgroundColors[field];
             return (
-              <TableRow key={row.id}>
+              <TableRow key={field.id}>
                 <TableCell className={classes.fields && classes[backgroundColor]}>
                   <span className={field === 'New buyers/MA registrations' ? classes.boldCell : classes.normalCell}>
                     {field}
                   </span>
                 </TableCell>
-                <TableCell
-                  align="center"
-                  className={classes.fields && classes[backgroundColor]}
-                >
-                  {row.lastMonth && row.lastMonth.length}
-                </TableCell>
-                <TableCell
-                  align="center"
-                  className={classes.fields && classes[backgroundColor]}
-                >                  
-                  {row.lastWeek && row.lastWeek.length}
-                </TableCell>
-                <TableCell
-                  align="center"
-                  className={classes.fields && classes[backgroundColor]}
-                >
-                  {row.thisMonth && row.thisMonth.length}
-                </TableCell>
-                <TableCell
-                  align="center"
-                  className={classes.fields && classes[backgroundColor]}
-                >
-                  {row.thisWeek && row.thisWeek.length}
-                </TableCell>
+                {timeIntervals.map((interval, index) => {
+                  return (
+                    <TableCell
+                      align="center"
+                    >
+                      {dataRegister && dataRegister[interval] && dataRegister[interval].length || '0'}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             );
           })}
           <br />
           <TableRow>
-          <TableCell rowSpan={8} align="center" className={classes.transactCell}>
+          <TableCell rowSpan={10} align="center" className={classes.transactCell}>
               <span>Transact</span>
             </TableCell>
           </TableRow>
-          {transactRows.map((row, index) => {
-            const field = fieldsTransact[index];
-            const backgroundColor = backgroundColors[field];
-            
+          {fieldsTransact.map((field, index) => {
             return (
-              <TableRow key={row.id}>
-                <TableCell
-                  className={classes.fields && classes[backgroundColor]}
-                >
-                  <span className={field === 'Completed Transactions' ? classes.boldCell : classes.normalCell}>
-                    {field}
-                  </span>
+              <TableRow>
+                <TableCell>
+                  {field.label}
                 </TableCell>
-                <TableCell
-                  align="center"
-                  className={classes[backgroundColor]}
-                >
-                  {row.value.lastMonth[row.type] ? row.value.lastMonth[row.type].length : 0}
-                </TableCell>
-                <TableCell
-                  align="center"
-                  className={classes[backgroundColor]}
-                >
-                  {row.value.lastWeek[row.type] ? row.value.lastWeek[row.type].length : 0}
-                </TableCell>
-                <TableCell
-                  align="center"
-                  className={classes[backgroundColor]}
-                >
-                  {row.value.thisMonth[row.type] ? row.value.thisMonth[row.type].length : 0}
-                </TableCell>
-                <TableCell
-                  align="center"
-                  className={classes[backgroundColor]}
-                >
-                  {row.value.thisWeek[row.type] ? row.value.thisWeek[row.type].length : 0}
-                </TableCell>
+                {timeIntervals.map((interval, index) => {
+                  return (
+                    <TableCell
+                      align="center"
+                    >
+                      {dataTransact && dataTransact[interval] && dataTransact[interval][field.value] || '0'}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
-            );
+            )
           })}
         </TableBody>
       </Table>
