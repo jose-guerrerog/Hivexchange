@@ -7,6 +7,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
+import DashboardChart from '../data/DashboardChart';
 
 const timeIntervals = [
   'lastMonth',
@@ -79,24 +80,63 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const months = ['Jan', 'Feb', 'Mar','Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      
 export default function Characteristics() {
   const [data, setData] = useState(null);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   const classes = useStyles();
+  
+  const getFormattedDate = (date, isMonth) => {
+    if (!date)
+      return '';
+    const dateComponents = date.split('-');
+    const formattedMonth = months[Number(dateComponents[1]) - 1];
+    if (isMonth) {
+      return `${formattedMonth} ${dateComponents[0]}`
+    }
+    return `${dateComponents[2]} ${formattedMonth} ${dateComponents[0]}`;
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
 
     const promise1 = axios.get(`${process.env.REACT_APP_BASE_API_ENDPOINT}/api/v1/report/users/dashboard`, {headers: { 'x-access-token': token}});
     const promise2 = axios.get(`${process.env.REACT_APP_BASE_API_ENDPOINT}/api/v1/report/orders/dashboard`, {headers: { 'x-access-token': token}});
     const promise3 = axios.get(`${process.env.REACT_APP_BASE_API_ENDPOINT}/api/v1/report/offers/dashboard`, {headers: { 'x-access-token': token}});
-      
-    Promise.all([promise1, promise2, promise3]).then(function(values) {
+    const promise4 = axios.get(`${process.env.REACT_APP_BASE_API_ENDPOINT}/api/v1/report/orders/longSummary`, {headers: { 'x-access-token': token}});
+
+    Promise.all([promise1, promise2, promise3, promise4]).then(function(values) {
       setIsDataLoaded(true);
+      let startDate = [];
+      let platform = [];
+      let broker = [];
+      
+      values[3].data.reverse().map(data => {
+        startDate.push(getFormattedDate(data.start, true));
+        platform.push(data.platform || '0');
+        broker.push(data.broker || '0');
+      });
+
+      const profits = {
+        series: [{
+          name: 'Platform',
+          data: platform,
+        }, {
+          name: 'Broker',
+          data: broker
+        }],
+        categories: startDate,
+      };
+
       const dataLoaded = {
         users: values[0].data,
         orders: values[1].data,
+        profits,
       };
+
+      console.log(profits);
       setData(dataLoaded);
     });
   }, []);
@@ -106,18 +146,6 @@ export default function Characteristics() {
       <div className={classes.circularProgress}><CircularProgress /></div>
     )
   }
-
-  const getFormattedDate = (date, isMonth) => {
-    if (!date)
-      return '';
-    const months = ['Jan', 'Feb', 'Mar','Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const dateComponents = date.split('-');
-    const formattedMonth = months[Number(dateComponents[1]) - 1];
-    if (isMonth) {
-      return `${formattedMonth} ${dateComponents[0]}`
-    }
-    return `${dateComponents[2]} ${formattedMonth} ${dateComponents[0]}`;
-  };
 
   const formatter = new Intl.NumberFormat('en-AU', {
     style: 'currency',
@@ -234,6 +262,9 @@ export default function Characteristics() {
           })}
         </TableBody>
       </Table>
+      <br />
+      <br />
+      <DashboardChart data={data && data.profits || {}} />
     </React.Fragment>
   );
 }
