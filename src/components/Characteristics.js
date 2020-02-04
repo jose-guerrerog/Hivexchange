@@ -10,8 +10,8 @@ import axios from 'axios';
 
 const timeIntervals = [
   'lastMonth',
-  'thisMonth',
   'lastWeek',
+  'thisMonth',
   'thisWeek',
 ];
 
@@ -21,12 +21,11 @@ const fieldsRegister = [
 
 const fieldsTransact = [
   {label: 'New Offers', value: 'idk'},
-  {label: 'Total', value: 'total'},
-  {label: 'Total Orders', value: 'count'},
   {label: 'Pending Orders', value: 'pending'},
   {label: 'Platform Profit', value: 'platformProfit'},
   {label: 'Broker Profit', value: 'brokerProfit'},
-  {label: 'Completed Transactions', value: 'idk'},
+  {label: 'Completed Transactions', value: 'count'},
+  {label: 'Total', value: 'total'},
 ];
 
 const backgroundColors = {
@@ -120,11 +119,11 @@ export default function Characteristics() {
     return `${dateComponents[2]} ${formattedMonth} ${dateComponents[0]}`;
   };
 
-  const roundTwoDecimals = (value) => {
-    if (!value)
-      return null;
-    return Math.ceil(parseFloat(value) * 100) / 100;
-  };
+  const formatter = new Intl.NumberFormat('en-AU', {
+    style: 'currency',
+    currency: 'AUD',
+    minimumFractionDigits: 2
+  });
 
   const dataRegister = data ? data.users : {};
   const dataTransact = data ? data.orders : {};
@@ -214,7 +213,6 @@ export default function Characteristics() {
           </TableRow>
           {fieldsTransact.map((field, index) => {
             const isAmount = field.value === 'total' || field.value === 'platformProfit' || field.value === 'brokerProfit';
-            const dollarSign = isAmount ? '$' : '';
             return (
               <TableRow>
                 <TableCell>
@@ -222,12 +220,12 @@ export default function Characteristics() {
                 </TableCell>
                 {timeIntervals.map((interval, index) => {
                   const value = dataTransact && dataTransact[interval] && dataTransact[interval][field.value] || '0';
-                  const displayedValue = isAmount ? roundTwoDecimals(value) : value;
+                  const displayedValue = isAmount ? formatter.format(value) : value;
                   return (
                     <TableCell
                       align="center"
                     >
-                      {dollarSign + displayedValue}
+                      {displayedValue}
                     </TableCell>
                   );
                 })}
