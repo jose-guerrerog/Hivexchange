@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { Card } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import axios from 'axios';
 import DashboardChart from '../data/DashboardChart';
+import axios from 'axios';
 
 const timeIntervals = [
   'lastMonth',
@@ -36,6 +37,13 @@ const backgroundColors = {
 };
 
 const useStyles = makeStyles(theme => ({
+  container: {
+    backgroundColor: '#424242',
+    borderRadius: '3px',
+    padding: '5px',
+    marginTop: '25px',
+    marginBottom: '5px',
+  },
   seeMore: {
     marginTop: theme.spacing(3),
   },
@@ -261,9 +269,9 @@ export default function Characteristics() {
           })}
         </TableBody>
       </Table>
-      <br />
-      <br />
-      <DashboardChart data={data && data.profits || {}} />
+      <Card className={classes.container}>
+        <DashboardChart data={data && data.profits || {}} />
+      </Card>
     </React.Fragment>
   );
 }

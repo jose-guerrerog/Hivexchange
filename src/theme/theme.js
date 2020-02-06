@@ -13,5 +13,18 @@ export default createMuiTheme({
         backgroundColor: '#03DAC5',
       },
     },
+    MuiPaper: {
+      root: {
+        color: '#FFFFFF',
+      }
+    },
+    MuiTableCell: {
+      head: {
+        color: '#FFFFFF',
+      },
+      body: {
+        color: '#FFFFFF',
+      },
+    }
   },
 });

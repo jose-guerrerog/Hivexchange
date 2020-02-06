@@ -3,9 +3,7 @@ import Characteristics from '../components/Characteristics';
 
 function Dashboard(props) {
   return (
-    <Fragment>
-      <Characteristics />
-    </Fragment> 
+    <Characteristics />
   ) 
 }
 

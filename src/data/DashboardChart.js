@@ -1,29 +1,37 @@
 import React, {Component} from "react";
 import { Card } from '@material-ui/core';
 import Chart from 'react-apexcharts';
-import { makeStyles } from '@material-ui/core/styles';
-
-const useStyles = makeStyles(theme => ({
-  container: {
-    backgroundColor: '#424242',
-    borderRadius: '3px',
-  },
-}));
 
 function DashboardChart(props) {
 
   const options = {
     series: props.data.series || [],
     title: {
-      text: 'Profit per Month'
+      text: 'Profit per Month',
+      style: {
+        color: '#FFFFFF',
+      }
     },
     xaxis: {
       type: 'category',
-      categories: props.data.categories || []
+      labels: {
+        style: {
+          colors: '#FFFFFF',
+        },
+      },
+      categories: props.data.categories || [],
     },
     yaxis: [{
       title: {
         text: 'Amount ($)',
+        style: {
+          color: '#FFFFFF',
+        },
+      },
+      labels: {
+        style: {
+          colors: '#FFFFFF',
+        },
       },
       decimalsInFloat: 2
     }],
@@ -40,23 +48,23 @@ function DashboardChart(props) {
       offsetY: -15,
       style: {
         fontSize: '10px',
-        colors: ["#304758"]
       }
+    },
+    legend: {
+      labels: {
+        colors: ['#FFFFFF', '#FFFFFF'],
+      },
     },
   };
 
-  const classes = useStyles();
-
   return (
-    <Card className={classes.container}>
-      <Chart
-        options={options}
-        series={options.series}
-        type="bar"
-        width={'100%'}
-        height={400}
-      />
-    </Card>
+    <Chart
+      options={options}
+      series={options.series}
+      type="bar"
+      width={'100%'}
+      height={400}
+    />
   );
 }
 
