@@ -1,5 +1,14 @@
 import React, {Component} from "react";
-import Chart from 'react-apexcharts'
+import { Card } from '@material-ui/core';
+import Chart from 'react-apexcharts';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(theme => ({
+  container: {
+    backgroundColor: '#424242',
+    borderRadius: '3px',
+  },
+}));
 
 function DashboardChart(props) {
 
@@ -36,8 +45,10 @@ function DashboardChart(props) {
     },
   };
 
+  const classes = useStyles();
+
   return (
-    <div className="chart card-body pt-0">
+    <Card className={classes.container}>
       <Chart
         options={options}
         series={options.series}
@@ -45,7 +56,7 @@ function DashboardChart(props) {
         width={'100%'}
         height={400}
       />
-    </div>
+    </Card>
   );
 }
 

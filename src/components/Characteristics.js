@@ -112,7 +112,6 @@ export default function Characteristics() {
       let startDate = [];
       let platform = [];
       let broker = [];
-      
       values[3].data.reverse().map(data => {
         startDate.push(getFormattedDate(data.start, true));
         platform.push(data.platform || '0');

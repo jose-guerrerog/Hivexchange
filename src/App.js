@@ -22,7 +22,7 @@ function App() {
       preserveAspectRatio: 'xMidYMid slice'
     }
   };
-
+  
   useEffect(() => {
     setShowSVGLoader(true);
   }, []);

@@ -29,15 +29,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    color: 'white',
     float: 'right',
   },
-  button: {
-    color: 'white',
-    "&:hover": {
-      backgroundColor: "#FF9900",
-    }
-  }
 }));
 
 
@@ -76,7 +69,7 @@ const NavBar = (props) => {
           <div className={classes.buttonContainer}>
             <AccountCircleIcon />
             <Button
-              variant="outlined"
+              variant="contained"
               color="primary"
               onClick={() => handleLogout()}
               className={classes.button}
