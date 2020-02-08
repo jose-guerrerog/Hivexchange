@@ -7,7 +7,7 @@ function DashboardChart(props) {
   const options = {
     series: props.data.series || [],
     title: {
-      text: 'Profit per Month',
+      text: 'Cash in-out per Month',
       style: {
         color: '#FFFFFF',
       }
@@ -45,14 +45,14 @@ function DashboardChart(props) {
     dataLabels: {
       enabled: true,
       formatter: val => val === 0 ? '' : val,
-      offsetY: -15,
+      offsetY: -10,
       style: {
-        fontSize: '10px',
+        fontSize: '6.5px',
       }
     },
     legend: {
       labels: {
-        colors: ['#FFFFFF', '#FFFFFF'],
+        colors: '#FFFFFF',
       },
     },
   };

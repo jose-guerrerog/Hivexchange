@@ -22,12 +22,13 @@ const fieldsRegister = [
 ];
 
 const fieldsTransact = [
-  {label: 'New Offers', value: 'idk'},
+  {label: 'New Offers', value: 'total'},
   {label: 'Pending Orders', value: 'pending'},
-  {label: 'Platform Profit', value: 'platformProfit'},
-  {label: 'Broker Profit', value: 'brokerProfit'},
+  {label: 'Platform Margin', value: 'platformProfit'},
+  {label: 'Broker receivables minus payables', value: 'brokerProfit'},
+  {label: 'Gross cash in/out', value: 'totalProfit'},
+  {label: 'Gross Transaction Value', value: 'total'},
   {label: 'Completed Transactions', value: 'count'},
-  {label: 'Total', value: 'total'},
 ];
 
 const backgroundColors = {
@@ -120,11 +121,18 @@ export default function Characteristics() {
       let startDate = [];
       let platform = [];
       let broker = [];
-      values[3].data.reverse().map(data => {
-        startDate.push(getFormattedDate(data.start, true));
-        platform.push(data.platform || '0');
-        broker.push(data.broker || '0');
-      });
+      let total = [];
+      if (values[3].data && values[3].data.length > 0) {
+        values[3].data.reverse().map(data => {
+          const dataPlatform = data.platform || 0;
+          const dataBroker = data.broker || 0;
+          const dataTotal = Math.round((dataPlatform + dataBroker) * 100) / 100;
+          startDate.push(getFormattedDate(data.start, true));
+          platform.push(dataPlatform);
+          broker.push(dataBroker);
+          total.push(dataTotal);
+        });
+      }
 
       const profits = {
         series: [{
@@ -133,6 +141,9 @@ export default function Characteristics() {
         }, {
           name: 'Broker',
           data: broker
+        }, {
+          name: 'Total',
+          data: total,
         }],
         categories: startDate,
       };
@@ -140,10 +151,9 @@ export default function Characteristics() {
       const dataLoaded = {
         users: values[0].data,
         orders: values[1].data,
+        offers: values[2].data,
         profits,
       };
-
-      console.log(profits);
       setData(dataLoaded);
     });
   }, []);
@@ -161,6 +171,7 @@ export default function Characteristics() {
   });
 
   const dataRegister = data ? data.users : {};
+  const dataOffers = data ? data.offers : {};
   const dataTransact = data ? data.orders : {};
   const dates = data ? data.users.dates : {};
 
@@ -177,7 +188,7 @@ export default function Characteristics() {
                   Previous Month
                 </div>
                 <div>
-                  {`${getFormattedDate(dates.startOfLastMonth, true)}`}
+                  {`${getFormattedDate(dates && dates.startOfLastMonth, true)}`}
                 </div>
               </div>
             </TableCell>
@@ -187,7 +198,7 @@ export default function Characteristics() {
                   Previous Week
                 </div>
                 <div>
-                  {`${getFormattedDate(dates.startOfLastWeek)}`}
+                  {`${getFormattedDate(dates && dates.startOfLastWeek)}`}
                 </div>
               </div>
             </TableCell>
@@ -197,7 +208,7 @@ export default function Characteristics() {
                   Current Month
                 </div>
                 <div>
-                  {`${getFormattedDate(dates.startOfMonth, true)}`}
+                  {`${getFormattedDate(dates && dates.startOfMonth, true)}`}
                 </div>
               </div>
             </TableCell>
@@ -207,7 +218,7 @@ export default function Characteristics() {
                   Current Week
                 </div>
                 <div>
-                  {`${getFormattedDate(dates.startOfWeek)}`}
+                  {`${getFormattedDate(dates && dates.startOfWeek)}`}
                 </div>
               </div>
             </TableCell>
@@ -219,7 +230,7 @@ export default function Characteristics() {
               <span>Register</span>
             </TableCell>
           </TableRow>
-          {fieldsRegister.map((field, index) => {
+          {fieldsRegister.map((field) => {
             const backgroundColor = backgroundColors[field];
             return (
               <TableRow key={field.id}>
@@ -247,14 +258,22 @@ export default function Characteristics() {
             </TableCell>
           </TableRow>
           {fieldsTransact.map((field, index) => {
-            const isAmount = field.value === 'total' || field.value === 'platformProfit' || field.value === 'brokerProfit';
+            const isOffers = index === 0;
+            const isAmount = !isOffers && (field.value === 'total' || field.value === 'platformProfit' || field.value === 'brokerProfit' || field.value === 'totalProfit');
             return (
               <TableRow>
                 <TableCell>
                   {field.label}
                 </TableCell>
                 {timeIntervals.map((interval, index) => {
-                  const value = dataTransact && dataTransact[interval] && dataTransact[interval][field.value] || '0';
+                  let value = 0;
+                  if (field.value === 'totalProfit') {
+                    const platformProfit = dataTransact && dataTransact[interval] && dataTransact[interval]['platformProfit'] || 0;
+                    const brokerProfit = dataTransact && dataTransact[interval] && dataTransact[interval]['brokerProfit'] || 0;
+                    value = platformProfit + brokerProfit;
+                  } else {
+                    value = isOffers ? dataOffers && dataOffers[interval] && dataOffers[interval][field.value] || '0' : dataTransact && dataTransact[interval] && dataTransact[interval][field.value] || '0';
+                  }
                   const displayedValue = isAmount ? formatter.format(value) : value;
                   return (
                     <TableCell
