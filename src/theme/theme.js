@@ -5,6 +5,7 @@ export default createMuiTheme({
     MuiToolbar: {
       root: {
         backgroundColor: '#212121',
+        color: '#FFFFFF',
       }
     },
     MuiButton: {
@@ -13,7 +14,7 @@ export default createMuiTheme({
         backgroundColor: '#03DAC5',
       },
     },
-    MuiPaper: {
+    MuiIconButton: {
       root: {
         color: '#FFFFFF',
       }
@@ -25,6 +26,6 @@ export default createMuiTheme({
       body: {
         color: '#FFFFFF',
       },
-    }
+    },
   },
 });

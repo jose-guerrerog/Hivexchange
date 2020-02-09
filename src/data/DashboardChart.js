@@ -1,5 +1,4 @@
-import React, {Component} from "react";
-import { Card } from '@material-ui/core';
+import React from "react";
 import Chart from 'react-apexcharts';
 
 function DashboardChart(props) {

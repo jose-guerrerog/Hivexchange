@@ -68,15 +68,13 @@ function App() {
   }
 
   return (
-      <div>
-        <Router>
-          <Switch>
-            <PrivateRoute path="/app" component={app} />
-            <Route path="/login" component={Login} />
-            <Route path="/" exact component={main} />
-          </Switch>
-        </Router>
-      </div>
+    <Router>
+      <Switch>
+        <PrivateRoute path="/app" component={app} />
+        <Route path="/login" component={Login} />
+        <Route path="/" exact component={main} />
+      </Switch>
+    </Router>
   )
 }
 

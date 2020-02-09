@@ -65,6 +65,12 @@ const NavBar = (props) => {
             component={Link}
             to={'/app/bills'}
           />
+          <Tab 
+            label={'OFFERS'} 
+            className={classes.tabLink}
+            component={Link}
+            to={'/app/offers'}
+          />
           </div>
           <div className={classes.buttonContainer}>
             <AccountCircleIcon />
