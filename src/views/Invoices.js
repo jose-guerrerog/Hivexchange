@@ -33,6 +33,7 @@ const useStyles1 = makeStyles(theme => ({
     fontSize: '40px',
     paddingTop: '15px',
     paddingBottom: '15px',
+    color: '#FFFFFF',
   },
   dateContainer: {
     display: 'flex',
@@ -42,6 +43,7 @@ const useStyles1 = makeStyles(theme => ({
     fontSize: '20px',
     fontWeight: 'bold',
     paddingRight: '25px',
+    color: '#FFFFFF',
   },
   subMenu: {
     display: 'flex',

@@ -5,10 +5,10 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  IconButton,
   Select,
   MenuItem,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 
 const fieldsOffers = [
@@ -27,12 +27,26 @@ const fieldsOffers = [
   {label: 'Buyers Not Seen', value: 'notSeenBuyers'},
 ];
 
+const useStyles = makeStyles(theme => ({
+  filterBlock: {
+    marginTop: '20px',
+    marginBottom: '40px',
+  },
+  filterText: {
+    color: '#FFFFFF',
+    fontSize: '20px',
+    fontWeight: 'bold',
+    marginRight: '25px',
+    paddingLeft: '15px',
+  },
+}));
 
 function Offers(props) {
 
   const [offers, setOffers] = useState([]);
   const [numberDays, setNumberDays] = useState(10);
   const token = localStorage.getItem('token');
+  const classes = useStyles();
 
   useEffect(() => {
     const url = `${process.env.REACT_APP_BASE_API_ENDPOINT}/api/v1/report/offers/allAppOffers?days=10`;
@@ -53,8 +67,8 @@ function Offers(props) {
 
   return (
     <>
-      <div>
-        <span>
+      <div className={classes.filterBlock}>
+        <span className={classes.filterText}>
           Number of Days:
         </span>
         <Select
